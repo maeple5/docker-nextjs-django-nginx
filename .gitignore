@@ -1,4 +1,4 @@
 .env
 __pycache__
 node_module
-mysql_volume/**
+/mysql_volume/**
