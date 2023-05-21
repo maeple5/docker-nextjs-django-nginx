@@ -32,6 +32,7 @@ services:
     networks:
       - backend_network
   db:
+    container_name: django-next-mysql
     build: ./mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
@@ -49,31 +50,16 @@ services:
       - backend_network
 
   web-front:
-    image: node:20.2
+    container_name: node-nginx-frontend
+    build:
+      context: ./frontend/web-front/.
+      dockerfile: Dockerfile
     volumes:
       - ./frontend/web-front:/home/app/frontend
     ports:
-      - 3000:3000
-    working_dir: /home/app/frontend/my-app
-    # command: [bash, -c, yarn upgrade --no-progress --network-timeout 1000000 && yarn run dev]
-    command: [bash, -c, npm install && npm run dev]
-    networks:
-      - frontend_network
-  frontend-server:
-    container_name: nginx_frontend
-    build:
-      context: ./frontend/nginx/.
-      dockerfile: Dockerfile.dev
-    ports:
-      - "80:80"
-    depends_on:
-      - web-front
-    networks:
-      - frontend_network
+      - 80:80
 networks:
   backend_network:
-    driver: bridge
-  frontend_network:
     driver: bridge
 volumes:
   static_volume:
