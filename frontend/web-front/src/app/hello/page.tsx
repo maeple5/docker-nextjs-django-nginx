@@ -1,3 +1,4 @@
+'use client';
 import React, { FC, useEffect, useState } from 'react'
 import axios, { AxiosInstance } from 'axios'
 
@@ -6,8 +7,8 @@ type Todo = {
     title: String
     body: String
 }
-
-export default (() => {
+ 
+export default function Hello() {
     const [todos, setTodo] = useState<Todo[]>([])
 
     const getAPIData = async () => {
@@ -28,7 +29,7 @@ export default (() => {
     }
     return (
         <div>
-            hello world
+            hello worlddddd
             <button onClick={() => getAPIData()}>click</button>
             {todos.map((item) => (
                 <div key={item.id}>
@@ -38,4 +39,4 @@ export default (() => {
             ))}
         </div>
     )
-}) as FC
+}

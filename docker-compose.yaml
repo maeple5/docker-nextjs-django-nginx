@@ -49,17 +49,64 @@ services:
     networks:
       - backend_network
 
-  web-front:
-    container_name: node-nginx-frontend
+  # web-front:
+  #   container_name: node-nginx-frontend
+  #   build:
+  #     context: ./frontend/web-front/.
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./frontend/web-front:/home/app/frontend
+  #     - /home/app/frontend/node_modules
+  #     - /home/app/frontend/.next
+  #   ports:
+  #     - 80:80
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+  front-prod:
+    container_name: front-prod
     build:
       context: ./frontend/web-front/.
       dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - '3000:3000'
+    networks:
+      - frontend_network
+
+  front-dev:
+    container_name: front-dev
+    build:
+      context: ./frontend/web-front/.
+      dockerfile: Dockerfile
+      target: deps
+    command: npm run dev
+    ports:
+      - '3001:3000'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
     volumes:
-      - ./frontend/web-front:/home/app/frontend
+      - ./frontend/web-front:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - frontend_network
+  frontend-server:
+    container_name: nginx_front
+    build: 
+      context: ./frontend/nginx/.
+      dockerfile: Dockerfile
     ports:
       - 80:80
+    networks:
+      - frontend_network
 networks:
   backend_network:
+    driver: bridge
+  frontend_network:
     driver: bridge
 volumes:
   static_volume:
